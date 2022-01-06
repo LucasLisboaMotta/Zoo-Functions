@@ -1,12 +1,10 @@
 const data = require('../data/zoo_data');
 
 function getSpeciesByIds(...ids) {
-  const listaAnimais = [];
-  ids.forEach((atual) => {
-    const animal = data.species.find((atual2) => atual === atual2.id);
-    listaAnimais.push(animal);
-  });
-  return listaAnimais;
+  return ids.reduce((acumulado, atual) => {
+    acumulado.push(data.species.find((atualFind) => atualFind.id === atual));
+    return acumulado;
+  }, []);
 }
 
 module.exports = getSpeciesByIds;
