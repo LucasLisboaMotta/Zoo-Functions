@@ -21,8 +21,4 @@ function getRelatedEmployees(managerId) {
   return colaboradores;
 }
 
-function opentime(open, closed) {
-  return open ? `open ${open} and closed ${closed}` : 'closed';
-}
-
 module.exports = { isManager, getRelatedEmployees };
