@@ -1,25 +1,21 @@
-const data = require('../data/zoo_data');
+const { prices } = require('../data/zoo_data');
 
-function countEntrants(entrants) {
+const countEntrants = (entrants) => {
   const clientes = { child: 0, adult: 0, senior: 0 };
-  entrants.forEach((atual) => {
-    if (atual.age < 18) clientes.child += 1;
-    if (atual.age >= 18 && atual.age < 50) clientes.adult += 1;
-    if (atual.age >= 50) clientes.senior += 1;
+  entrants.forEach(({ age }) => {
+    if (age < 18) clientes.child += 1;
+    if (age >= 18 && age < 50) clientes.adult += 1;
+    if (age >= 50) clientes.senior += 1;
   });
   return clientes;
-}
+};
 
-function calculateEntry(entrants) {
-  if (!entrants || Object.keys(entrants).length === 0) return 0;
+const calculateEntry = (entrants) => {
+  if (!entrants || !Object.keys(entrants).length) return 0;
 
   const clientes = countEntrants(entrants);
-  let total = 0;
   const keys = Object.keys(clientes);
-  keys.forEach((atual) => {
-    total += clientes[atual] * data.prices[atual];
-  });
-  return total;
-}
+  return keys.reduce((acumulador, chave) => acumulador + (clientes[chave] * prices[chave]), 0);
+};
 
 module.exports = { calculateEntry, countEntrants };
