@@ -39,7 +39,7 @@ const animalCalendar = (target) => {
   return animalReturn.availability;
 };
 
-function getSchedule(scheduleTarget) {
+const getSchedule = (scheduleTarget) => {
   const week = Object.keys(data.hours);
   const animal = data.species.reduce((acc, actual) => {
     acc.push(actual.name);
@@ -48,6 +48,6 @@ function getSchedule(scheduleTarget) {
   if (week.includes(scheduleTarget)) return weekCalendar(week, scheduleTarget);
   if (animal.includes(scheduleTarget)) return animalCalendar(scheduleTarget);
   return calendar(week);
-}
+};
 
 module.exports = getSchedule;

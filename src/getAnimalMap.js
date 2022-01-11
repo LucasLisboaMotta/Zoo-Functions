@@ -16,7 +16,6 @@ const includeNames = (animal, residents, options) => residents.reduce((acc, { na
 const getAnimalMap = (options) => species.reduce((acc, { location }) => {
   if (!acc.includes(location)) acc.push(location);
   parametro = (!options || !options.includeNames);
-  console.log(parametro);
   return acc;
 }, []).reduce((acc, local) => {
   acc[local] = species.reduce((acc2, { location, name, residents }) => {

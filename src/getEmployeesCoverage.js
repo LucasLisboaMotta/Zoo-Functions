@@ -1,62 +1,36 @@
-const data = require('../data/zoo_data');
+const { employees, species } = require('../data/zoo_data');
 
-const employees = (id) => {
-  const person = data.employees.find((find) => find.id === id);
-  const fullName = `${person.firstName} ${person.lastName}`;
-  const species = person.responsibleFor.reduce((acc, actual) => {
-    const animal = data.species.find((find) => find.id === actual);
-    acc.push(animal.name);
-    return acc;
-  }, []);
-  const locations = species.reduce((acc, actual) => {
-    const location = data.species.find((find) => find.name === actual);
-    acc.push(location.location);
-    return acc;
-  }, []);
-  return {
+let variavelDeControle = 0;
+const objetoRetorno = (id, firstName, lastName, responsibleFor, obj = { id: 'vazio' }) => {
+  const locations = [];
+  const objeto = {
     id,
-    fullName,
-    species,
+    fullName: `${firstName} ${lastName}`,
+    species: responsibleFor.map((animal) => {
+      const { location, name } = species.find((elemento) => elemento.id === animal);
+      locations.push(location);
+      return name;
+    }),
     locations,
   };
+  const controle = (obj.id === id || objeto.fullName.includes(obj.name));
+  if (obj.id !== 'vazio' && !controle) variavelDeControle += 1;
+  return [objeto, controle];
 };
 
-const allEmployees = () => {
-  const all = data.employees.reduce((acc, actual) => {
-    acc.push(actual.id);
+const getEmployeesCoverage = (obj) => {
+  variavelDeControle = 0;
+  const retorno = employees.reduce((acc, { id, firstName, lastName, responsibleFor }) => {
+    const objeto = objetoRetorno(id, firstName, lastName, responsibleFor, obj);
+    if (!obj) {
+      acc.push(objeto[0]);
+      return acc;
+    }
+    if (objeto[1]) return objeto[0];
     return acc;
   }, []);
-  return all.reduce((acc, actual) => {
-    acc.push(employees(actual));
-    return acc;
-  }, []);
-};
-
-const objectId = (id) => {
-  const finalObject = { id: 'none', ok: false };
-  if (data.employees.find((find) => find.id === id.id)) {
-    finalObject.id = id.id;
-    finalObject.ok = true;
-  }
-  if (data.employees.find((find) => find.firstName === id.name)) {
-    const firstName = data.employees.find((find) => find.firstName === id.name);
-    finalObject.id = firstName.id;
-    finalObject.ok = true;
-  }
-  if (data.employees.find((find) => find.lastName === id.name)) {
-    const lastName = data.employees.find((find) => find.lastName === id.name);
-    finalObject.id = lastName.id;
-    finalObject.ok = true;
-  }
-  return finalObject;
-};
-
-function getEmployeesCoverage(id) {
-  if (!id) return allEmployees();
-  if (data.employees.find((find) => find.id === id)) return employees(id);
-  const trueID = objectId(id);
-  if (trueID.ok) return employees(trueID.id);
+  if (variavelDeControle !== employees.length) return retorno;
   throw new Error('Informações inválidas');
-}
+};
 
 module.exports = getEmployeesCoverage;
