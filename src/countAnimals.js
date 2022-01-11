@@ -1,7 +1,8 @@
 const { species } = require('../data/zoo_data');
 
 const countAnimals = (animal) => {
-  if (!animal) return species.reduce((acumulador, { name, residents }) => ({...acumulador, [name]: residents.length}), {});
+  if (!animal) return species
+    .reduce((acumulador, { name, residents }) => ({ ...acumulador, [name]: residents.length }), {});
   const animais = species.find(({ name }) => name === animal.specie).residents;
 
   if (!animal.sex) return animais.length;

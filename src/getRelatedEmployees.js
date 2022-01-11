@@ -9,6 +9,6 @@ const getRelatedEmployees = (id) => {
     if (managers.includes(id)) acumulador.push(`${firstName} ${lastName}`);
     return acumulador;
   }, []);
-}
+};
 
 module.exports = { isManager, getRelatedEmployees };
