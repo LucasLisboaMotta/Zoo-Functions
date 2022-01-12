@@ -1,53 +1,24 @@
-const data = require('../data/zoo_data');
+const { species, hours } = require('../data/zoo_data');
 
-const animalDay = (target) => {
-  const animalReturn = data.species.reduce((acc, actual) => {
-    if (actual.availability.includes(target)) acc.push(actual.name);
-    return acc;
-  }, []);
-  return animalReturn;
+const dias = Object.keys(hours);
+const animais = species.map(({ name }) => name);
+
+const calendario = (dia) => {
+  if (!hours[dia].open) {
+    return ({ [dia]: { officeHour: 'CLOSED', exhibition: 'The zoo will be closed!' } });
+  } return { [dia]: {
+    officeHour: `Open from ${hours[dia].open}am until ${hours[dia].close}pm`,
+    exhibition: species.reduce((acc, { name, availability }) => {
+      if (availability.includes(dia)) acc.push(name);
+      return acc;
+    }, []),
+  } };
 };
 
-const weekCalendar = (week, targ) => {
-  const day = {};
-  const closed = week.reduce((acc, actual) => {
-    if (data.hours[actual].open === 0 && data.hours[actual].close === 0) acc.push(actual);
-    return acc;
-  }, []);
-  if (closed.includes(targ)) {
-    day[targ] = {};
-    day[targ].officeHour = 'CLOSED';
-    day[targ].exhibition = 'The zoo will be closed!';
-    return day;
-  }
-  day[targ] = {};
-  day[targ].officeHour = `Open from ${data.hours[targ].open}am until ${data.hours[targ].close}pm`;
-  day[targ].exhibition = animalDay(targ);
-  return day;
-};
-
-const calendar = (week) => {
-  const finalCalendar = week.reduce((acc, actual) => {
-    Object.assign(acc, weekCalendar(week, actual));
-    return acc;
-  }, {});
-  return finalCalendar;
-};
-
-const animalCalendar = (target) => {
-  const animalReturn = data.species.find((actual) => actual.name === target);
-  return animalReturn.availability;
-};
-
-const getSchedule = (scheduleTarget) => {
-  const week = Object.keys(data.hours);
-  const animal = data.species.reduce((acc, actual) => {
-    acc.push(actual.name);
-    return acc;
-  }, []);
-  if (week.includes(scheduleTarget)) return weekCalendar(week, scheduleTarget);
-  if (animal.includes(scheduleTarget)) return animalCalendar(scheduleTarget);
-  return calendar(week);
+const getSchedule = (target) => {
+  if (animais.includes(target)) return species.find(({ name }) => name === target).availability;
+  if (dias.includes(target)) return calendario(target);
+  return dias.map((dia) => calendario(dia));
 };
 
 module.exports = getSchedule;
