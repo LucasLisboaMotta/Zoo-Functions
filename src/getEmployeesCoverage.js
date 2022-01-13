@@ -1,36 +1,26 @@
-const { employees, species } = require('../data/zoo_data');
+const data = require('../data/zoo_data');
 
-let variavelDeControle = 0;
-const objetoRetorno = (id, firstName, lastName, responsibleFor, obj = { id: 'vazio' }) => {
-  const locations = [];
-  const objeto = {
-    id,
-    fullName: `${firstName} ${lastName}`,
-    species: responsibleFor.map((animal) => {
-      const { location, name } = species.find((elemento) => elemento.id === animal);
-      locations.push(location);
-      return name;
-    }),
-    locations,
-  };
-  const controle = (obj.id === id || objeto.fullName.includes(obj.name));
-  if (obj.id !== 'vazio' && !controle) variavelDeControle += 1;
-  return [objeto, controle];
+const employeeObject = ({ id, firstName, lastName, responsibleFor }) => {
+  const fullName = `${firstName} ${lastName}`;
+  const { species, locations } = responsibleFor.reduce((acc, current) => {
+    const { name, location } = data.species.find((currentSpecie) => current === currentSpecie.id);
+    acc.species.push(name);
+    acc.locations.push(location);
+    return acc;
+  }, { species: [], locations: [] });
+  return { id, fullName, species, locations };
 };
 
-const getEmployeesCoverage = (obj) => {
-  variavelDeControle = 0;
-  const retorno = employees.reduce((acc, { id, firstName, lastName, responsibleFor }) => {
-    const objeto = objetoRetorno(id, firstName, lastName, responsibleFor, obj);
-    if (!obj) {
-      acc.push(objeto[0]);
-      return acc;
-    }
-    if (objeto[1]) return objeto[0];
-    return acc;
-  }, []);
-  if (variavelDeControle !== employees.length) return retorno;
+const getEmployeesCoverage = (options) => {
+  if (!options) return data.employees.map((employee) => employeeObject(employee));
+
+  const employee = data.employees.find(({ id, firstName, lastName }) => id === options.id
+  || options.name === firstName || options.name === lastName);
+  if (employee) return employeeObject(employee);
+
   throw new Error('Informações inválidas');
 };
+
+console.log(getEmployeesCoverage());
 
 module.exports = getEmployeesCoverage;
